@@ -1,0 +1,15 @@
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\bin\Debug\net5.0\Coursework(BLL).deps.json
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\bin\Debug\net5.0\Coursework(BLL).dll
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\bin\Debug\net5.0\ref\Coursework(BLL).dll
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\bin\Debug\net5.0\Coursework(BLL).pdb
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\obj\Debug\net5.0\Coursework(BLL).csprojAssemblyReference.cache
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\obj\Debug\net5.0\Coursework(BLL).GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\obj\Debug\net5.0\Coursework(BLL).AssemblyInfoInputs.cache
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\obj\Debug\net5.0\Coursework(BLL).AssemblyInfo.cs
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\obj\Debug\net5.0\Coursework(BLL).csproj.CoreCompileInputs.cache
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\obj\Debug\net5.0\Coursework(BLL).dll
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\obj\Debug\net5.0\ref\Coursework(BLL).dll
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\obj\Debug\net5.0\Coursework(BLL).pdb
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\bin\Debug\net5.0\Coursework(DAL).dll
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\bin\Debug\net5.0\Coursework(DAL).pdb
+C:\Users\Serhii\Desktop\2 курс\ООП\Курсова\Coursework(BLL)\obj\Debug\net5.0\Coursework(BLL).csproj.CopyComplete
