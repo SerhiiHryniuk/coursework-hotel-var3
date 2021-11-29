@@ -21,7 +21,7 @@ namespace Coursework_BLL_
             roomsDAL = hotel.Rooms;
             for (int i = 0; i < numberOfRooms; i++)
             {
-                rooms[i] = new Room(roomsDAL[i].PlaceInRoom, i + 1);
+                rooms[i] = new Room(roomsDAL[i].PlaceInRoom, i + 1, roomsDAL[i].ISRoomOccupied);
             }
         }
         public Hotel(string nameOfHotel, int numberOfRooms)
@@ -46,6 +46,11 @@ namespace Coursework_BLL_
             get
             {
                 return rooms;
+            }
+            set
+            {
+                rooms = null;
+                rooms = value;
             }
         }
 

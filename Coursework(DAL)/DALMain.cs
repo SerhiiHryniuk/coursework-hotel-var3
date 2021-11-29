@@ -9,8 +9,44 @@ namespace Coursework_DAL_
     {
         List<DALHotel> DALhotels = new List<DALHotel>();
         List<DALClient> DALclient = new List<DALClient>();
+        List<DALOrder> DALorders = new List<DALOrder>();
 
         public DALMain() { }
+
+        ///FILE WORK WITH ORDERS
+        public DALMain(List<DALOrder> DALorders)
+        {
+            this.DALorders = DALorders;
+            WriteOnFileOrders();
+        }
+        public void WriteOnFileOrders()
+        {
+            File.Delete("ListOfOrders.dat");
+            BinaryFormatter formatter = new BinaryFormatter();
+            using (FileStream fs = new FileStream("ListOfOrders.dat", FileMode.OpenOrCreate))
+            {
+                formatter.Serialize(fs, DALorders.ToArray());
+            }
+        }
+        public List<DALOrder> ReadFromFileOrders()
+        {
+            DALorders.Clear();
+            BinaryFormatter formatter = new BinaryFormatter();
+            if (File.Exists("ListOfOrders.dat"))
+            {
+                using (FileStream fs = new FileStream($"ListOfOrders.dat", FileMode.OpenOrCreate))
+                {
+                    DALOrder[] ordersDALdes = (DALOrder[])formatter.Deserialize(fs);
+                    for (int i = 0; i < ordersDALdes.Length; i++)
+                    {
+                        DALorders.Add(ordersDALdes[i]);
+                    }
+                }
+            }
+            return DALorders;
+        }
+
+
 
         ///FILE WORk WITH CLIENTS
         public DALMain(List<DALClient> clients)

@@ -4,32 +4,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Coursework_BLL_
+namespace Coursework_DAL_
 {
-    class OrderOnRoom
+    [Serializable]
+    public class DALOrder
     {
-        private Client client { get; set; }
-        private Hotel hotel { get; set; }
+        private DALClient client { get; set; }
+        private DALHotel hotel { get; set; }
 
         private List<int> roomsNumber = new List<int>();
         private int price { get; set; }
         private int howManyDays { get; set; }
 
-        public OrderOnRoom(Client client, Hotel hotel, List<int> roomsNumber, int howManyDays)
+        public DALOrder(DALClient client, DALHotel hotel, List<int> roomsNumber, int howManyDays)
         {
             this.client = client;
             this.hotel = hotel;
             this.roomsNumber = roomsNumber;
             this.howManyDays = howManyDays;
-            price = 0;
-            Room[] rooms = hotel.Rooms;
-            for (int i = 0; i < roomsNumber.Count; i++)
-            {
-                price += rooms[roomsNumber[i] - 1].PriceForRoom;
-            }
-            price *= howManyDays;
         }
-
+        
         public List<int> RoomsNumber
         {
             get
@@ -37,20 +31,23 @@ namespace Coursework_BLL_
                 return roomsNumber;
             }
         }
-        public Hotel Hotel
-        {
-            get
-            {
-                return hotel;
-            }
-        }
-        public Client Client
+
+        public DALClient Client
         {
             get
             {
                 return client;
             }
         }
+
+        public DALHotel Hotel
+        {
+            get
+            {
+                return hotel;
+            }
+        }
+
         public int Price
         {
             get
