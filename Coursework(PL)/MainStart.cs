@@ -1,6 +1,7 @@
 ﻿using System;
 using Coursework_BLL_;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Coursework_PL_
 {
@@ -54,7 +55,7 @@ namespace Coursework_PL_
             BLLMAIN.GetInfoFromFileAboutHotels();
             BLLMAIN.GetInfoFromFileAboutOrders();
             string chooser;
-            string nameOfHotel;
+            string nameOfHotel = "";
             int numberOfHotels;
             bool forWhile = true;
             while (forWhile)
@@ -68,12 +69,50 @@ namespace Coursework_PL_
                 switch (chooser)
                 {
                     case "1":{
+                            Console.Clear();
                             Console.WriteLine("------------------");
-                            Console.Write("Input a name of hotel: ");
-                            nameOfHotel = Console.ReadLine();
-                            int numberOfRooms = BLLMAIN.AddHotel(nameOfHotel);
-                            Console.WriteLine($"Hotel {nameOfHotel} with {numberOfRooms} rooms was added.");
-                            Console.WriteLine("------------------");
+                            bool MARK_CHECK_NAME_HOTEL = true;
+                            bool symbol = false;
+                            while (MARK_CHECK_NAME_HOTEL)
+                            {
+                                Console.Write("Input a name of hotel(if you want cancel adding write symbol /): ");
+                                nameOfHotel = Console.ReadLine();
+                                if(nameOfHotel != "/")
+                                {
+                                    if (BLLMAIN.GetInfoAboutCountOfHotels() == 0)
+                                    {
+                                        MARK_CHECK_NAME_HOTEL = false;
+                                    }
+                                    for (int i = 0; i < BLLMAIN.GetInfoAboutCountOfHotels(); i++)
+                                    {
+                                        if (BLLMAIN.GetNameOfHotel(i) == nameOfHotel)
+                                        {
+                                            Console.WriteLine("The hotel with this name exist, try another name.");
+                                        }
+                                        else
+                                        {
+                                            MARK_CHECK_NAME_HOTEL = false;
+                                        }
+                                    }
+                                }
+                                else 
+                                {
+                                    symbol = true;
+                                    MARK_CHECK_NAME_HOTEL = false;
+                                }
+                            }
+                            if (symbol)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("You cancel adding.");
+                                Console.WriteLine("------------------");
+                            }
+                            else
+                            {
+                                int numberOfRooms = BLLMAIN.AddHotel(nameOfHotel);
+                                Console.WriteLine($"Hotel {nameOfHotel} with {numberOfRooms} rooms was added.");
+                                Console.WriteLine("------------------");
+                            }
                         } break;///ADD HOTEL TO LIST
                     case "2":{
                             Console.Clear();
@@ -108,17 +147,44 @@ namespace Coursework_PL_
                                     Console.WriteLine($"{i + 1}. Hotel {nameOfHotel} with {roomsInHotel} rooms in total");
                                 }
                                 Console.WriteLine("------------------");
-                            MARKDELETE:
-                                Console.Write("Choose a hotel you want to delete: ");
-                                chooser = Console.ReadLine();
-                                if (Convert.ToInt32(chooser) > numberOfHotels || Convert.ToInt32(chooser) < 1)
+                                bool MARK_DELETE = true;
+                                while (MARK_DELETE)
                                 {
-                                    Console.WriteLine("Number outside of range, try again");
-                                    goto MARKDELETE;
-                                }
-                                else
-                                {
-                                    BLLMAIN.DeleteHotel(Convert.ToInt32(chooser));
+                                    Console.Write("Choose a hotel you want to delete(if you want cancel write symbol /): ");
+                                    chooser = Console.ReadLine();
+                                    int deleteInt = 0;
+                                    bool check = true;
+                                    if(chooser != "/")
+                                    {
+                                        try
+                                        {
+                                            deleteInt = Convert.ToInt32(chooser);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            exceptionForPL.InputNumberAreWrong(e);
+                                            check = false;
+                                        }
+                                        if (check)
+                                        {
+                                            if (deleteInt > numberOfHotels || deleteInt < 1)
+                                            {
+                                                Console.WriteLine("Number outside of range, try again");
+                                            }
+                                            else
+                                            {
+                                                BLLMAIN.DeleteHotel(deleteInt);
+                                                MARK_DELETE = false;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("You cancel deleting.");
+                                        Console.WriteLine("------------------");
+                                        MARK_DELETE = false;
+                                    }
                                 }
                             }
                             else
@@ -140,19 +206,46 @@ namespace Coursework_PL_
                                     Console.WriteLine($"{i + 1}. Hotel {nameOfHotel} with {roomsInHotel} rooms in total");
                                 }
                                 Console.WriteLine("------------------");
-                            MARKDELETE:
-                                Console.Write("Choose a hotel you want to get more info: ");
-                                chooser = Console.ReadLine();
-                                if (Convert.ToInt32(chooser) > numberOfHotels || Convert.ToInt32(chooser) < 1)
+                                bool MARK_CHOOSE_HOTEL = true;
+                                while (MARK_CHOOSE_HOTEL)
                                 {
-                                    Console.WriteLine("Number outside of range, try again");
-                                    goto MARKDELETE;
-                                }
-                                else
-                                {
-                                    Console.Clear();
-                                    Console.WriteLine(BLLMAIN.MoreInfoAboutHotel(Convert.ToInt32(chooser)));
-                                    Console.WriteLine("------------------");
+                                    Console.Write("Choose a hotel you want to get more info(if you want cancel write symbol /): ");
+                                    chooser = Console.ReadLine();
+                                    int intInfo = 0;
+                                    bool check = true;
+                                    if (chooser != "/")
+                                    {
+                                        try
+                                        {
+                                            intInfo = Convert.ToInt32(chooser);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            exceptionForPL.InputNumberAreWrong(e);
+                                            check = false;
+                                        }
+                                        if (check)
+                                        {
+                                            if (intInfo > numberOfHotels || intInfo < 1)
+                                            {
+                                                Console.WriteLine("Number outside of range, try again");
+                                            }
+                                            else
+                                            {
+                                                Console.Clear();
+                                                Console.WriteLine(BLLMAIN.MoreInfoAboutHotel(Convert.ToInt32(chooser)));
+                                                Console.WriteLine("------------------");
+                                                MARK_CHOOSE_HOTEL = false;
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("You cancel getting info.");
+                                        Console.WriteLine("------------------");
+                                        MARK_CHOOSE_HOTEL = false;
+                                    }
                                 }
                             }
                             else
@@ -196,16 +289,34 @@ namespace Coursework_PL_
                 {
                     case "1":{
                             Console.WriteLine("------------------");
-                            Console.Write("Input a firstname of client: ");
+                            Console.Write("Input a firstname of client(if you want cancel adding write symbol /): ");
                             firstname = Console.ReadLine();
-                            Console.Write("Input a lastname of client: ");
+                            if(firstname == "/")
+                            {
+                                Console.Clear();
+                                Console.WriteLine("You canceled adding.");
+                                break;
+                            }
+                            Console.Write("Input a lastname of client(if you want cancel adding write symbol /): ");
                             lastname = Console.ReadLine();
+                            if(lastname == "/")
+                            {
+                                Console.Clear();
+                                Console.WriteLine("You canceled adding.");
+                                break;
+                            }
                             bool forWhileSecond = true;
                             while (forWhileSecond)
                             {
                                 bool phoneSame = false;
-                                Console.Write("Input a phone of client(example [+380123456789]): ");
+                                Console.Write("Input a phone of client(example [+380123456789]) (if you want cancel write symbol /): ");
                                 phone = Console.ReadLine();
+                                if(phone == "/")
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("You canceled addinng.");
+                                    break;
+                                }
                                 if (Regex.IsMatch(phone, regexPhone))
                                 {
                                     numberOfClients = BLLMAIN.GetInfoAboutCountOfClients();
@@ -222,6 +333,7 @@ namespace Coursework_PL_
                                     }
                                     else
                                     {
+                                        BLLMAIN.AddClient(firstname, lastname, phone);
                                         forWhileSecond = false;
                                     }
                                 }
@@ -230,7 +342,6 @@ namespace Coursework_PL_
                                     Console.WriteLine("Number is not right, try again.");
                                 }
                             }
-                            BLLMAIN.AddClient(firstname, lastname, phone);
                             Console.WriteLine("------------------");
                         } break;///ADD CLIENT TO LIST
                     case "2":{
@@ -271,17 +382,39 @@ namespace Coursework_PL_
                                 bool forWhileS = true;
                                 while (forWhileS)
                                 {
-                                    Console.Write("Choose a client you want to delete: ");
+                                    Console.Write("Choose a client you want to delete(if you want cancel write symbol /): ");
                                     chooser = Console.ReadLine();
-                                    if (Convert.ToInt32(chooser) > numberOfClients || Convert.ToInt32(chooser) < 1)
+                                    int intDel = 0;
+                                    bool check = true;
+                                    if(chooser == "/")
                                     {
-                                        Console.WriteLine("Number outside of range, try again");
+                                        Console.Clear();
+                                        Console.WriteLine("You canceled deleting.");
+                                        break;
                                     }
-                                    else
+
+                                    try
                                     {
-                                        forWhileS = false;
-                                        BLLMAIN.DeleteClient(Convert.ToInt32(chooser));
-                                        Console.WriteLine("------------------");
+                                        intDel = Convert.ToInt32(chooser);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        exceptionForPL.InputNumberAreWrong(e);
+                                        check = false;
+                                    }
+
+                                    if (check)
+                                    {
+                                        if (intDel > numberOfClients || intDel < 1)
+                                        {
+                                            Console.WriteLine("Number outside of range, try again");
+                                        }
+                                        else
+                                        {
+                                            forWhileS = false;
+                                            BLLMAIN.DeleteClient(intDel);
+                                            Console.WriteLine("------------------");
+                                        }
                                     }
                                 }
                             }
@@ -308,85 +441,107 @@ namespace Coursework_PL_
                                 bool forWhileS = true;
                                 while (forWhileS)
                                 {
-                                    Console.Write("Choose a client you want to edit: ");
+                                    bool test = true;
+                                    Console.Write("Choose a client you want to edit(if you want cancel write symbol /): ");
                                     chooser = Console.ReadLine();
-                                    if (Convert.ToInt32(chooser) > numberOfClients || Convert.ToInt32(chooser) < 1)
+                                    int clientEdit = 0;
+                                    if(chooser == "/")
                                     {
-                                        Console.WriteLine("Number outside of range, try again");
+                                        Console.Clear();
+                                        Console.WriteLine("You canceled editing.");
+                                        break;
                                     }
-                                    else
-                                    {
-                                        int clientChooser = Convert.ToInt32(chooser);
-                                        Console.WriteLine("------------------");
-                                        bool forWhileSS = true;
-                                        while (forWhileSS)
-                                        {
-                                            Console.WriteLine("What you want to edit?");
-                                            Console.WriteLine("1. Firstname of client.");
-                                            Console.WriteLine("2. Lastname of client.");
-                                            Console.WriteLine("3. Phone of client.");
-                                            chooser = Console.ReadLine();
 
-                                            switch (chooser)
+                                    try
+                                    {
+                                        clientEdit = Convert.ToInt32(chooser);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        exceptionForPL.InputNumberAreWrong(e);
+                                        test = false;
+                                    }
+                                    if (test)
+                                    {
+                                        if (clientEdit > numberOfClients || clientEdit < 1)
+                                        {
+                                            Console.WriteLine("Number outside of range, try again");
+                                        }
+                                        else
+                                        {
+                                            int clientChooser = Convert.ToInt32(chooser);
+                                            Console.WriteLine("------------------");
+                                            bool forWhileSS = true;
+                                            while (forWhileSS)
                                             {
-                                                case "1":
-                                                    Console.Write("Input a firstname of client: ");
-                                                    firstname = Console.ReadLine();
-                                                    BLLMAIN.EditInfoAboutClient("1", firstname, clientChooser);
-                                                    forWhileS = false;
-                                                    forWhileSS = false;
-                                                    Console.Clear();
-                                                    break;
-                                                case "2":
-                                                    Console.Write("Input a lastname of client: ");
-                                                    lastname = Console.ReadLine();
-                                                    BLLMAIN.EditInfoAboutClient("2", lastname, clientChooser);
-                                                    forWhileS = false;
-                                                    forWhileSS = false;
-                                                    Console.Clear();
-                                                    break;
-                                                case "3":
-                                                    bool forWhileSSS = true;
-                                                    while (forWhileSSS)
-                                                    {
-                                                        bool phoneSameSECOND = false;
-                                                        Console.Write("Input a phone of client(example [+380123456789]): ");
-                                                        phone = Console.ReadLine();
-                                                        if (Regex.IsMatch(phone, regexPhone))
+                                                Console.WriteLine("What you want to edit?");
+                                                Console.WriteLine("1. Firstname of client.");
+                                                Console.WriteLine("2. Lastname of client.");
+                                                Console.WriteLine("3. Phone of client.");
+                                                chooser = Console.ReadLine();
+
+                                                switch (chooser)
+                                                {
+                                                    case "1":
+                                                        Console.Write("Input a firstname of client: ");
+                                                        firstname = Console.ReadLine();
+                                                        BLLMAIN.EditInfoAboutClient("1", firstname, clientChooser);
+                                                        forWhileS = false;
+                                                        forWhileSS = false;
+                                                        Console.Clear();
+                                                        break;
+                                                    case "2":
+                                                        Console.Write("Input a lastname of client: ");
+                                                        lastname = Console.ReadLine();
+                                                        BLLMAIN.EditInfoAboutClient("2", lastname, clientChooser);
+                                                        forWhileS = false;
+                                                        forWhileSS = false;
+                                                        Console.Clear();
+                                                        break;
+                                                    case "3":
+                                                        bool forWhileSSS = true;
+                                                        while (forWhileSSS)
                                                         {
-                                                            numberOfClients = BLLMAIN.GetInfoAboutCountOfClients();
-                                                            for (int i = 0; i < numberOfClients; i++)
+                                                            bool phoneSameSECOND = false;
+                                                            Console.Write("Input a phone of client(example [+380123456789]): ");
+                                                            phone = Console.ReadLine();
+                                                            if (Regex.IsMatch(phone, regexPhone))
                                                             {
-                                                                if (BLLMAIN.GetPhoneOfClients(i) == phone && clientChooser - 1 != i)
+                                                                numberOfClients = BLLMAIN.GetInfoAboutCountOfClients();
+                                                                for (int i = 0; i < numberOfClients; i++)
                                                                 {
-                                                                    phoneSameSECOND = true;
+                                                                    if (BLLMAIN.GetPhoneOfClients(i) == phone && clientChooser - 1 != i)
+                                                                    {
+                                                                        phoneSameSECOND = true;
+                                                                    }
                                                                 }
-                                                            }
-                                                            if (phoneSameSECOND)
-                                                            {
-                                                                Console.WriteLine("Phone the same as in other client, input other.");
+                                                                if (phoneSameSECOND)
+                                                                {
+                                                                    Console.WriteLine("Phone the same as in other client, input other.");
+                                                                }
+                                                                else
+                                                                {
+                                                                    forWhileSSS = false;
+                                                                }
                                                             }
                                                             else
                                                             {
-                                                                forWhileSSS = false;
+                                                                Console.WriteLine("Number is not right, try again.");
                                                             }
                                                         }
-                                                        else
-                                                        {
-                                                            Console.WriteLine("Number is not right, try again.");
-                                                        }
-                                                    }
-                                                    BLLMAIN.EditInfoAboutClient("3", phone, clientChooser);
-                                                    forWhileS = false;
-                                                    forWhileSS = false;
-                                                    Console.Clear();
-                                                    break;
-                                                default:
-                                                    Console.WriteLine("Number is not right, try again");
-                                                    break;
+                                                        BLLMAIN.EditInfoAboutClient("3", phone, clientChooser);
+                                                        forWhileS = false;
+                                                        forWhileSS = false;
+                                                        Console.Clear();
+                                                        break;
+                                                    default:
+                                                        Console.WriteLine("Number is not right, try again");
+                                                        break;
+                                                }
                                             }
                                         }
                                     }
+                                  
                                 }
                             }
                             else
@@ -417,11 +572,13 @@ namespace Coursework_PL_
             string nameOfHotel, firstname, lastname, phone;
             int numberOfHotels, numberOfClients, numberOfOrders, chooserClient = 0, chooserHotel = 0, numbersOfRoomsToOrder = 0;
             int roomForOne = 0, roomForTwo = 0, roomForThree = 0;
-            int howManyDays = 0;
+            DateTime DateIn = DateTime.MinValue;
+            DateTime DateOut = DateTime.MinValue;
             bool ORDER_MANAGMENT_MENU = true;
             bool[] whichHotelToChoose;
             bool test = true;
             int[] PlaceInRoom;
+            bool cancel = false;
             while (ORDER_MANAGMENT_MENU)
             {
                 Console.WriteLine("1. Add order to list.");
@@ -433,6 +590,7 @@ namespace Coursework_PL_
                 switch (chooser)
                 {
                     case "1":{
+                            cancel = false;
                             Console.Clear();
                             //TEST FOR COUNTS HOTELS AND CLIENTS
                             {
@@ -461,7 +619,7 @@ namespace Coursework_PL_
                             //CHOOSE A CLIENT
                             {
                                 Console.WriteLine("------------------");
-                                Console.WriteLine("Choose which client, want to make order:");
+                                Console.WriteLine("Choose which client, want to make order(if you want cancel write symbol /):");
                                 numberOfClients = BLLMAIN.GetInfoAboutCountOfClients();
                                 for (int i = 0; i < numberOfClients; i++)
                                 {
@@ -474,16 +632,42 @@ namespace Coursework_PL_
                                 while (MARK_CHOOSE_CLIENT)
                                 {
                                     chooser = Console.ReadLine();
-                                    if (Convert.ToInt32(chooser) > numberOfClients || Convert.ToInt32(chooser) < 1)
+                                    int intClient;
+                                    bool testM = true;
+                                    if(chooser == "/")
                                     {
-                                        Console.WriteLine("Number outside of range, try again");
-                                    }
-                                    else
-                                    {
-                                        chooserClient = Convert.ToInt32(chooser);
-                                        Console.WriteLine("------------------");
+                                        cancel = true;
                                         break;
                                     }
+                                    try
+                                    {
+                                        intClient = Convert.ToInt32(chooser);
+                                    }
+                                    catch(Exception e)
+                                    {
+                                        exceptionForPL.InputNumberAreWrong(e);
+                                        testM = false;
+                                    }
+                                    if (testM)
+                                    {
+                                        if (Convert.ToInt32(chooser) > numberOfClients || Convert.ToInt32(chooser) < 1)
+                                        {
+                                            Console.WriteLine("Number outside of range, try again");
+                                        }
+                                        else
+                                        {
+                                            chooserClient = Convert.ToInt32(chooser);
+                                            Console.WriteLine("------------------");
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (cancel)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("You canceled adding order.");
+                                    Console.WriteLine("------------------");
+                                    break;
                                 }
                             }
                             //INPUT A NUMBER OF ROOMS TO ORDER
@@ -491,10 +675,16 @@ namespace Coursework_PL_
                                 bool MARK_CHOOSE_NUMBER_ROOM = true;
                                 while (MARK_CHOOSE_NUMBER_ROOM)
                                 {
-                                    Console.WriteLine("Input how many rooms you want to order(in number type):");
+                                    Console.WriteLine("Input how many rooms you want to order(in number type)(if you want cancel adding write symbol /):");
+                                    string stringRoom = Console.ReadLine();
+                                    if(stringRoom == "/")
+                                    {
+                                        cancel = true;
+                                        break;
+                                    }
                                     try
                                     {
-                                        numbersOfRoomsToOrder = Convert.ToInt32(Console.ReadLine());
+                                        numbersOfRoomsToOrder = Convert.ToInt32(stringRoom);
                                         test = true;
                                     }
                                     catch (Exception e)
@@ -507,6 +697,13 @@ namespace Coursework_PL_
                                         Console.WriteLine("------------------");
                                         break;
                                     }
+                                }
+                                if (cancel)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("You canceled adding order.");
+                                    Console.WriteLine("------------------");
+                                    break;
                                 }
                             }
                             //INPUT A PLACE IN ROOMS FOR HOW MANY PEOPLE
@@ -565,7 +762,7 @@ namespace Coursework_PL_
                                 bool MARK_CHOOSE_HOTEL = true;
                                 while (MARK_CHOOSE_HOTEL)
                                 {
-                                    Console.WriteLine("Input which hotel, client want to choose:");
+                                    Console.WriteLine("Input which hotel, client want to choose(if you want cancel adding write symbol /):");
                                     numberOfHotels = BLLMAIN.GetInfoAboutCountOfHotels();
                                     whichHotelToChoose = new bool[numberOfHotels];
                                     for (int i = 0; i < numberOfHotels; i++)
@@ -584,9 +781,15 @@ namespace Coursework_PL_
                                     }
 
                                     bool tester = true;
+                                    string stringHotel = Console.ReadLine();
+                                    if(stringHotel == "/")
+                                    {
+                                        cancel = true;
+                                        break;
+                                    }
                                     try
                                     {
-                                        chooserHotel = Convert.ToInt32(Console.ReadLine());
+                                        chooserHotel = Convert.ToInt32(stringHotel);
                                     }
                                     catch (Exception e)
                                     {
@@ -617,31 +820,103 @@ namespace Coursework_PL_
                                         }
                                     }
                                 }
+                                if (cancel)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("You canceled adding order.");
+                                    Console.WriteLine("------------------");
+                                    break;
+                                }
                             }
                             //INPUT FOR HOW LONG TO STAY
                             {
-                                bool MARK_CHOOSE_HOW_LONG = true;
-                                while (MARK_CHOOSE_HOW_LONG)
+                                string dateIn = "";
+                                string dateOut = "";
+                                string pattern = "dd/MM/yyyy";
+
+                                DateTime DateMinimum;
+                                DateTime.TryParseExact("01/01/2022", pattern, null, DateTimeStyles.None, out DateMinimum);
+
+
+                                bool MARK_WRITE_DATE_IN_OUT = true;
+                                while (MARK_WRITE_DATE_IN_OUT)
                                 {
-                                    Console.WriteLine("Input for how long client want to order room(in number type):");
-                                    try
+                                    bool MARK_WRITE_DATE_IN = true;
+                                    while (MARK_WRITE_DATE_IN)
                                     {
-                                        howManyDays = Convert.ToInt32(Console.ReadLine());
-                                        test = true;
+                                        Console.Write("Input a date IN(example: 01/01/2022) start begin from 01/01/2022(if you want cancel write symbol /): ");
+                                        dateIn = Console.ReadLine();
+                                        if(dateIn == "/")
+                                        {
+                                            cancel = true;
+                                            break;
+                                        }
+                                        if (DateTime.TryParseExact(dateIn, pattern, null, DateTimeStyles.None, out DateIn))
+                                        {
+                                            if (DateIn < DateMinimum)
+                                            {
+                                                Console.WriteLine("This date was before 01/01/2022, try again.");
+                                            }
+                                            else
+                                            {
+                                                MARK_WRITE_DATE_IN = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Unable input for this pattern, try again");
+                                        }
                                     }
-                                    catch (Exception e)
+
+                                    bool MARK_WRITE_DATE_OUT = true;
+                                    if (!cancel)
                                     {
-                                        exceptionForPL.InputNumberAreWrong(e);
-                                        test = false;
+                                        while (MARK_WRITE_DATE_OUT)
+                                        {
+                                            Console.Write("Input a date OUT(example: 01/01/2022) it must be after date IN(if you want cancel write symbol /): ");
+                                            dateOut = Console.ReadLine();
+                                            if(dateOut == "/")
+                                            {
+                                                cancel = true;
+                                                break;
+                                            }
+                                            if (DateTime.TryParseExact(dateOut, pattern, null, DateTimeStyles.None, out DateOut))
+                                            {
+                                                if (DateIn > DateOut)
+                                                {
+                                                    Console.WriteLine("This date before date IN, try again.");
+                                                }
+                                                else if (DateIn == DateOut)
+                                                {
+                                                    Console.WriteLine("This date equal date IN, try again.");
+                                                }
+                                                else
+                                                {
+                                                    MARK_WRITE_DATE_OUT = false;
+                                                    MARK_WRITE_DATE_IN_OUT = false;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("Unable input for this pattern, try again");
+                                            }
+                                        }
                                     }
-                                    if (test)
+                                    if (cancel)
                                     {
-                                        Console.WriteLine("------------------");
                                         break;
                                     }
                                 }
+                                if (cancel)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("You canceled adding order.");
+                                    Console.WriteLine("------------------");
+                                    break;
+                                }
                             }
-                            BLLMAIN.AddOrder(chooserClient - 1, chooserHotel - 1, roomForOne, roomForTwo, roomForThree, howManyDays);
+                            BLLMAIN.AddOrder(chooserClient - 1, chooserHotel - 1, roomForOne, roomForTwo, roomForThree, DateIn, DateOut);
+                            Console.Clear();
                         } break;///ADD ORDER TO LIST
                     case "2":{
                             Console.Clear();
@@ -681,10 +956,17 @@ namespace Coursework_PL_
                                 bool MARK_DELETE = true;
                                 while (MARK_DELETE)
                                 {
-                                    Console.Write("Choose a order you want to delete: ");
+                                    Console.Write("Choose a order you want to delete(if you want cancel deleting write symbol /): ");
+                                    chooser = Console.ReadLine();
+                                    if(chooser == "/")
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("You cancel deleting.");
+                                        Console.WriteLine("------------------");
+                                        break;
+                                    }
                                     try
                                     {
-                                        chooser = Console.ReadLine();
                                         if (Convert.ToInt32(chooser) > numberOfOrders || Convert.ToInt32(chooser) < 1)
                                         {
                                             Console.WriteLine("Number outside of range, try again");
@@ -724,10 +1006,17 @@ namespace Coursework_PL_
                                 bool MARK_DELETE = true;
                                 while (MARK_DELETE)
                                 {
-                                    Console.Write("Choose a order you want to delete: ");
+                                    Console.Write("Choose a order you want to get more info(if you want cancel write symbol /): ");
+                                    chooser = Console.ReadLine();
+                                    if(chooser == "/")
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("You cancel action get more info.");
+                                        Console.WriteLine("------------------");
+                                        break;
+                                    }
                                     try
                                     {
-                                        chooser = Console.ReadLine();
                                         if (Convert.ToInt32(chooser) > numberOfOrders || Convert.ToInt32(chooser) < 1)
                                         {
                                             Console.WriteLine("Number outside of range, try again");

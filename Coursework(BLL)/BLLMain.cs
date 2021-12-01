@@ -12,7 +12,7 @@ namespace Coursework_BLL_
         public BLLMain() {}
 
         ///ORDER WORK
-        public void AddOrder(int client, int hotel, int roomForOne, int roomForTwo, int roomForThree, int howManyDays)
+        public void AddOrder(int client, int hotel, int roomForOne, int roomForTwo, int roomForThree, DateTime dateIn, DateTime dateOut)
         {
             List<int> roomsNumber = new List<int>();
             Room[] rooms = hotels[hotel].Rooms;
@@ -57,7 +57,15 @@ namespace Coursework_BLL_
             hotels[hotel].Rooms = rooms;
             WriteOnFileHotel();
 
-            OrderOnRoom order = new OrderOnRoom(clients[client], hotels[hotel], roomsNumber, howManyDays);
+            OrderOnRoom order;
+            try
+            {
+                order = new OrderOnRoom(clients[client], hotels[hotel], roomsNumber, dateIn, dateOut);
+            }
+            catch
+            {
+                throw new ExceptionWhenInitializeClass("Something wrong with parameters while initialize class in function AddOrder.");
+            }
             orders.Add(order);
             WriteOnFileOrder();
         }
@@ -72,11 +80,18 @@ namespace Coursework_BLL_
                 Room[] roomInHotel = orders[i].Hotel.Rooms;
                 for (int j = 0; j < orders[i].Hotel.NumberOfRooms; j++)
                 {
-                    rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied);
+                    try
+                    {
+                        rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied);
+                    }
+                    catch
+                    {
+                        throw new ExceptionWhenIndexOutOfRange("Index out of range in function WriteOnFileOrder.");
+                    }
                 }
-                Coursework_DAL_.DALHotel hotelDAL = new Coursework_DAL_.DALHotel(hotels[i].NameOfHotel, hotels[i].NumberOfRooms, rooms);
+                Coursework_DAL_.DALHotel hotelDAL = new Coursework_DAL_.DALHotel(orders[i].Hotel.NameOfHotel, orders[i].Hotel.NumberOfRooms, rooms);
 
-                Coursework_DAL_.DALOrder orderDAL = new Coursework_DAL_.DALOrder(clientDAL, hotelDAL, orders[i].RoomsNumber, orders[i].HowManyDays);
+                Coursework_DAL_.DALOrder orderDAL = new Coursework_DAL_.DALOrder(clientDAL, hotelDAL, orders[i].RoomsNumber, orders[i].DateIn, orders[i].DateOut);
                 DALorders.Add(orderDAL);
             }
             DALMain DALMAIN = new DALMain(DALorders);
@@ -88,28 +103,67 @@ namespace Coursework_BLL_
             List<Coursework_DAL_.DALOrder> DALorders = DALMAIN.ReadFromFileOrders();
             for (int i = 0; i < DALorders.Count; i++)
             {
-                Client client = new Client(DALorders[i].Client.Firstname, DALorders[i].Client.Lastname, DALorders[i].Client.Phone);
-                Hotel hotel = new Hotel(DALorders[i].Hotel);
-                List<int> roomsNumber = DALorders[i].RoomsNumber;
-                OrderOnRoom order = new OrderOnRoom(client, hotel, roomsNumber, DALorders[i].HowManyDays);
+                Client client;
+                Hotel hotel;
+                List<int> roomsNumber;
+                OrderOnRoom order;
+                try
+                {
+                    client = new Client(DALorders[i].Client.Firstname, DALorders[i].Client.Lastname, DALorders[i].Client.Phone);
+                    hotel = new Hotel(DALorders[i].Hotel);
+                    roomsNumber = DALorders[i].RoomsNumber;
+                    order = new OrderOnRoom(client, hotel, roomsNumber, DALorders[i].DateIn, DALorders[i].DateOut);
+                }
+                catch
+                {
+                    throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetInfoFromFileAboutOrders.");
+                }
                 orders.Add(order);
             }
         }
         public int GetInfoAboutCountOfOrders()
         {
-            return orders.Count;
+            try
+            {
+                return orders.Count;
+            }
+            catch
+            {
+                throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetInfoAboutCountOfOrders.");
+            }
         }
         public string GetClientFromOrder(int count)
         {
-            return $"{orders[count].Client.Firstname} {orders[count].Client.Lastname}";
+            try
+            {
+                return $"{orders[count].Client.Firstname} {orders[count].Client.Lastname}";
+            }
+            catch
+            {
+                throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetClientFromOrder.");
+            }
         }
         public string GetHotelFromOrder(int count)
         {
-            return orders[count].Hotel.NameOfHotel;
+            try
+            {
+                return orders[count].Hotel.NameOfHotel;
+            }
+            catch
+            {
+                throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetHotelFromOrder.");
+            }
         }
         public int GetDaysInOrder(int count)
         {
-            return orders[count].HowManyDays;
+            try
+            {
+                return orders[count].HowManyDays;
+            }
+            catch
+            {
+                throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetDaysInOrder.");
+            }
         }
         public void DeleteOrder(int count)
         {
@@ -125,7 +179,14 @@ namespace Coursework_BLL_
             Room[] rooms = orders[count - 1].Hotel.Rooms;
             for (int i = 0; i < orders[count - 1].RoomsNumber.Count; i++)
             {
-                rooms[orders[count - 1].RoomsNumber[i] - 1].ISRoomOccupied = false;
+                try
+                {
+                    rooms[orders[count - 1].RoomsNumber[i] - 1].ISRoomOccupied = false;
+                }
+                catch
+                {
+                    throw new ExceptionWhenIndexOutOfRange("Index out of range in function DeleteOrder with room.");
+                }
             }
             hotels[hotelIndex].Rooms = rooms;
             WriteOnFileHotel();
@@ -142,10 +203,20 @@ namespace Coursework_BLL_
             Room[] rooms = orders[count - 1].Hotel.Rooms;
             for (int i = 0; i < orders[count - 1].RoomsNumber.Count; i++)
             {
-                Room room = rooms[orders[count - 1].RoomsNumber[i] - 1];
+                Room room;
+                try
+                {
+                    room = rooms[orders[count - 1].RoomsNumber[i] - 1];
+                }
+                catch
+                {
+                    throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetMoreInfoAboutOrder with room.");
+                }
                 result += $"Room#{room.RoomNumber}: {room.PlaceInRoom} people in room; \n";
             }
             result += "------------------ \n";
+            result += $"Date IN: {orders[count - 1].DateIn.Day}/{orders[count - 1].DateIn.Month}/{orders[count - 1].DateIn.Year}; \n";
+            result += $"Date OUT: {orders[count - 1].DateOut.Day}/{orders[count - 1].DateOut.Month}/{orders[count - 1].DateOut.Year}; \n";
             result += $"Reservation for {orders[count - 1].HowManyDays} days;\n";
             result += $"Price: {orders[count - 1].Price} uah.";
             return result;
@@ -154,12 +225,29 @@ namespace Coursework_BLL_
         ///CLIENT WORK
         public void AddClient(string firstname, string lastname, string phone)
         {
-            Client client = new Client(firstname, lastname, phone);
+            Client client;
+            try
+            {
+                client = new Client(firstname, lastname, phone);
+            }
+            catch
+            {
+                throw new ExceptionWhenInitializeClass("Something wrong with parameters while initialize class.");
+            }
+
             clients.Add(client);
             List<Coursework_DAL_.DALClient> DALclients = new List<Coursework_DAL_.DALClient>();
             for (int i = 0; i < clients.Count; i++)
             {
-                Coursework_DAL_.DALClient clientDAL = new Coursework_DAL_.DALClient(clients[i].Firstname, clients[i].Lastname, clients[i].Phone);
+                Coursework_DAL_.DALClient clientDAL;
+                try
+                {
+                    clientDAL = new Coursework_DAL_.DALClient(clients[i].Firstname, clients[i].Lastname, clients[i].Phone);
+                }
+                catch
+                {
+                    throw new ExceptionWhenInitializeClass("Something wrong with parameters while initialize class.");
+                }
                 DALclients.Add(clientDAL);
             }
             DALMain DALMAIN = new DALMain(DALclients);
@@ -197,7 +285,15 @@ namespace Coursework_BLL_
             List<Coursework_DAL_.DALClient> DALclients = new List<Coursework_DAL_.DALClient>();
             for (int i = 0; i < clients.Count; i++)
             {
-                Coursework_DAL_.DALClient clientDAL = new Coursework_DAL_.DALClient(clients[i].Firstname, clients[i].Lastname, clients[i].Phone);
+                Coursework_DAL_.DALClient clientDAL;
+                try
+                {
+                    clientDAL = new Coursework_DAL_.DALClient(clients[i].Firstname, clients[i].Lastname, clients[i].Phone);
+                }
+                catch
+                {
+                    throw new ExceptionWhenInitializeClass("Something wrong with parameters while initialize class.");
+                }
                 DALclients.Add(clientDAL);
             }
             DALMain DALMAIN = new DALMain(DALclients);
@@ -225,7 +321,15 @@ namespace Coursework_BLL_
             List<Coursework_DAL_.DALClient> DALclients = DALMAIN.ReadFromFileCLients();
             for (int i = 0; i < DALclients.Count; i++)
             {
-                Client client = new Client(DALclients[i]);
+                Client client;
+                try
+                {
+                    client = new Client(DALclients[i]);
+                }
+                catch
+                {
+                    throw new ExceptionWhenInitializeClass("Something wrong with parameters while initialize class.");
+                }
                 clients.Add(client);
             }
         }
@@ -247,9 +351,24 @@ namespace Coursework_BLL_
                 roomInHotel = hotels[i].Rooms;
                 for (int j = 0; j < hotels[i].NumberOfRooms; j++)
                 {
-                    rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied);
+                    try
+                    {
+                        rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied);
+                    }
+                    catch
+                    {
+                        throw new ExceptionWhenInitializeClass("Something wrong with parameters while initialize class.");
+                    }
                 }
-                Coursework_DAL_.DALHotel hotelDAL = new Coursework_DAL_.DALHotel(hotels[i].NameOfHotel, hotels[i].NumberOfRooms, rooms);
+                Coursework_DAL_.DALHotel hotelDAL;
+                try
+                {
+                    hotelDAL = new Coursework_DAL_.DALHotel(hotels[i].NameOfHotel, hotels[i].NumberOfRooms, rooms);
+                }
+                catch
+                {
+                    throw new ExceptionWhenInitializeClass("Something wrong with parameters while initialize class.");
+                }
                 DALhotels.Add(hotelDAL);
             }
             DALMain DALMAIN = new DALMain(DALhotels);
@@ -307,9 +426,16 @@ namespace Coursework_BLL_
         {
             for (int i = 0; i < orders.Count; i++)
             {
-                if (hotels[count - 1].NameOfHotel == orders[i].Hotel.NameOfHotel)
+                try
                 {
-                    DeleteOrder(i + 1);
+                    if (hotels[count - 1].NameOfHotel == orders[i].Hotel.NameOfHotel)
+                    {
+                        DeleteOrder(i + 1);
+                    }
+                }
+                catch
+                {
+                    throw new ExceptionWhenIndexOutOfRange("Index out of range in function DeleteHotel.");
                 }
             }
             hotels.RemoveAt(count - 1);
@@ -326,9 +452,24 @@ namespace Coursework_BLL_
                 roomInHotel = hotels[i].Rooms;
                 for (int j = 0; j < hotels[i].NumberOfRooms; j++)
                 {
-                    rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied);
+                    try
+                    {
+                        rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied);
+                    }
+                    catch
+                    {
+                        throw new ExceptionWhenIndexOutOfRange("Index out of range in function WriteOnFileHotel with rooms.");
+                    }
                 }
-                Coursework_DAL_.DALHotel hotelDAL = new Coursework_DAL_.DALHotel(hotels[i].NameOfHotel, hotels[i].NumberOfRooms, rooms);
+                Coursework_DAL_.DALHotel hotelDAL;
+                try
+                {
+                    hotelDAL = new Coursework_DAL_.DALHotel(hotels[i].NameOfHotel, hotels[i].NumberOfRooms, rooms);
+                }
+                catch
+                {
+                    throw new ExceptionWhenIndexOutOfRange("Index out of range in function WriteOnFileHotel with hotelDAL.");
+                }
                 DALhotels.Add(hotelDAL);
             }
             DALMain DALMAIN = new DALMain(DALhotels);
@@ -340,21 +481,50 @@ namespace Coursework_BLL_
             List<Coursework_DAL_.DALHotel> DALhotels = DALMAIN.ReadFromFileHotel();
             for (int i = 0; i < DALhotels.Count; i++)
             {
-                Hotel hotel = new Hotel(DALhotels[i]);
+                Hotel hotel;
+                try
+                {
+                    hotel = new Hotel(DALhotels[i]);
+                }
+                catch
+                {
+                    throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetInfoFromFileAboutHotels.");
+                }
                 hotels.Add(hotel);
             }
         }
         public int GetInfoAboutCountOfHotels()
         {
-            return hotels.Count;
+            try
+            {
+                return hotels.Count;
+            }
+            catch
+            {
+                throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetInfoAboutCountOfHotels.");
+            }
         }
         public string GetNameOfHotel(int count) 
         {
-            return hotels[count].NameOfHotel;
+            try
+            {
+                return hotels[count].NameOfHotel;
+            }
+            catch
+            {
+                throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetNameOfHotel.");
+            }
         }
         public int GetNumberOfRoomsInHotel(int count)
         {
-            return hotels[count].NumberOfRooms;
+            try
+            {
+                return hotels[count].NumberOfRooms;
+            }
+            catch
+            {
+                throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetNumberOfRoomInHotel.");
+            }
         }
         public bool AnalyzeIfHotelHaveRooms(int count, int roomForOne, int roomForTwo, int roomForThree)
         {
