@@ -16,16 +16,37 @@ namespace Coursework_DAL_
         ///FILE WORK WITH ORDERS
         public DALMain(List<DALOrder> DALorders)
         {
-            this.DALorders = DALorders;
+            try
+            {
+                this.DALorders = DALorders;
+            }
+            catch
+            {
+                throw new ExceptionsWhenInitializeClass("Something wrong while initialize classes in DALorders");
+            }
             WriteOnFileOrders();
         }
         public void WriteOnFileOrders()
         {
-            File.Delete("ListOfOrders.dat");
+            try
+            {
+                File.Delete("ListOfOrders.dat");
+            }
+            catch
+            {
+                throw new ExceptionFileDoesntExist("File ListOfOrders doesnt exist.");
+            }
             BinaryFormatter formatter = new BinaryFormatter();
             using (FileStream fs = new FileStream("ListOfOrders.dat", FileMode.OpenOrCreate))
             {
-                formatter.Serialize(fs, DALorders.ToArray());
+                try
+                {
+                    formatter.Serialize(fs, DALorders.ToArray());
+                }
+                catch
+                {
+                    throw new ExceptionWhileSerialize("Something wrong when serialize orders");
+                }
             }
         }
         public List<DALOrder> ReadFromFileOrders()
@@ -36,7 +57,15 @@ namespace Coursework_DAL_
             {
                 using (FileStream fs = new FileStream($"ListOfOrders.dat", FileMode.OpenOrCreate))
                 {
-                    DALOrder[] ordersDALdes = (DALOrder[])formatter.Deserialize(fs);
+                    DALOrder[] ordersDALdes;
+                    try
+                    {
+                        ordersDALdes = (DALOrder[])formatter.Deserialize(fs);
+                    }
+                    catch
+                    {
+                        throw new ExceptionWhileDeseralize("Something wrong when deseralize orders");
+                    }
                     for (int i = 0; i < ordersDALdes.Length; i++)
                     {
                         DALorders.Add(ordersDALdes[i]);
@@ -51,16 +80,37 @@ namespace Coursework_DAL_
         ///FILE WORk WITH CLIENTS
         public DALMain(List<DALClient> clients)
         {
-            DALclient = clients;
+            try
+            {
+                DALclient = clients;
+            }
+            catch
+            {
+                throw  new ExceptionsWhenInitializeClass("Something wrong while initialize classes in DALClient");
+            }
             WriteOnFileClients();
         }
         public void WriteOnFileClients()
         {
-            File.Delete("ListOfClients.dat");
+            try
+            {
+                File.Delete("ListOfClients.dat");
+            }
+            catch
+            {
+                throw new ExceptionFileDoesntExist("File ListOfCLient doesnt exist.");
+            }
             BinaryFormatter formatter = new BinaryFormatter();
             using (FileStream fs = new FileStream("ListOfClients.dat", FileMode.OpenOrCreate))
             {
-                formatter.Serialize(fs, DALclient.ToArray());
+                try
+                {
+                    formatter.Serialize(fs, DALclient.ToArray());
+                }
+                catch
+                {
+                    throw new ExceptionWhileSerialize("Something wrong when serialize cients");
+                }
             }
         }
         public List<DALClient> ReadFromFileCLients()
@@ -71,7 +121,15 @@ namespace Coursework_DAL_
             {
                 using (FileStream fs = new FileStream($"ListOfClients.dat", FileMode.OpenOrCreate))
                 {
-                    DALClient[] clientDALdes = (DALClient[])formatter.Deserialize(fs);
+                    DALClient[] clientDALdes;
+                    try
+                    {
+                        clientDALdes = (DALClient[])formatter.Deserialize(fs);
+                    }
+                    catch
+                    {
+                        throw new ExceptionWhileDeseralize("Something wrong when deseralize clients");
+                    }
                     for (int i = 0; i < clientDALdes.Length; i++)
                     {
                         DALclient.Add(clientDALdes[i]);
@@ -86,16 +144,37 @@ namespace Coursework_DAL_
         ///FILE WORK WITH HOTELS
         public DALMain(List<DALHotel> hotels)
         {
-            DALhotels = hotels;
+            try
+            {
+                DALhotels = hotels;
+            }
+            catch
+            {
+                throw new ExceptionsWhenInitializeClass("Something wrong while initialize classes in DALHotel");
+            }
             WriteOnFileHotels();
         }
         public void WriteOnFileHotels()
         {
-            File.Delete("ListOfHotels.dat");
+            try
+            {
+                File.Delete("ListOfHotels.dat");
+            }
+            catch
+            {
+                throw new ExceptionFileDoesntExist("File ListOfHotels doesnt exist.");
+            }
             BinaryFormatter formatter = new BinaryFormatter();
             using (FileStream fs = new FileStream("ListOfHotels.dat", FileMode.OpenOrCreate))
             {
-                formatter.Serialize(fs, DALhotels.ToArray());
+                try
+                {
+                    formatter.Serialize(fs, DALhotels.ToArray());
+                }
+                catch
+                {
+                    throw new ExceptionWhileSerialize("Something wrong when serialize hotels");
+                }
             }
         }
         public List<DALHotel> ReadFromFileHotel()
@@ -106,7 +185,15 @@ namespace Coursework_DAL_
             {
                 using (FileStream fs = new FileStream($"ListOfHotels.dat", FileMode.OpenOrCreate))
                 {
-                    DALHotel[] hotelDALDes = (DALHotel[])formatter.Deserialize(fs);
+                    DALHotel[] hotelDALDes;
+                    try
+                    {
+                        hotelDALDes = (DALHotel[])formatter.Deserialize(fs);
+                    }
+                    catch
+                    {
+                        throw new ExceptionWhileDeseralize("Something wrong when deseralize hotels");
+                    }
                     for (int i = 0; i < hotelDALDes.Length; i++)
                     {
                         DALhotels.Add(hotelDALDes[i]);

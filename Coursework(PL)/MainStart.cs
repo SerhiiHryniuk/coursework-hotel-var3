@@ -57,6 +57,7 @@ namespace Coursework_PL_
             string chooser;
             string nameOfHotel = "";
             int numberOfHotels;
+            int priceForOneNight = 0;
             bool forWhile = true;
             while (forWhile)
             {
@@ -72,6 +73,7 @@ namespace Coursework_PL_
                             Console.Clear();
                             Console.WriteLine("------------------");
                             bool MARK_CHECK_NAME_HOTEL = true;
+                            bool MARK_PRICE_FOR_ONE = true;
                             bool symbol = false;
                             while (MARK_CHECK_NAME_HOTEL)
                             {
@@ -99,6 +101,34 @@ namespace Coursework_PL_
                                 {
                                     symbol = true;
                                     MARK_CHECK_NAME_HOTEL = false;
+                                    MARK_PRICE_FOR_ONE = false;
+                                }
+                            }
+                            while (MARK_PRICE_FOR_ONE)
+                            {
+                                bool Error = false;
+                                Console.Write("Input a price of hotel for one people for one night(if you want cancel adding write symbol /): ");
+                                chooser = Console.ReadLine();
+                                if (chooser != "/")
+                                {
+                                    try
+                                    {
+                                        priceForOneNight = Convert.ToInt32(chooser);
+                                    }
+                                    catch(Exception e)
+                                    {
+                                        exceptionForPL.InputNumberAreWrong(e);
+                                        Error = true;
+                                    }
+                                    if (!Error)
+                                    {
+                                        MARK_PRICE_FOR_ONE = false;
+                                    }
+                                }
+                                else
+                                {
+                                    symbol = true;
+                                    MARK_PRICE_FOR_ONE = false;
                                 }
                             }
                             if (symbol)
@@ -109,7 +139,7 @@ namespace Coursework_PL_
                             }
                             else
                             {
-                                int numberOfRooms = BLLMAIN.AddHotel(nameOfHotel);
+                                int numberOfRooms = BLLMAIN.AddHotel(nameOfHotel, priceForOneNight);
                                 Console.WriteLine($"Hotel {nameOfHotel} with {numberOfRooms} rooms was added.");
                                 Console.WriteLine("------------------");
                             }
@@ -275,6 +305,7 @@ namespace Coursework_PL_
             string chooser;
             string firstname, lastname, phone = "";
             int numberOfClients;
+            int numberOfOrders;
             const string regexPhone = @"^([\+]?38[-]?|[0])?[0-9][0-9]{9}$";
             bool forWhile = true;
             while (forWhile)
@@ -283,11 +314,15 @@ namespace Coursework_PL_
                 Console.WriteLine("2. Info about all clients.");
                 Console.WriteLine("3. Delete client from list.");
                 Console.WriteLine("4. Edit client.");
-                Console.WriteLine("5. Back to menu.");
+                Console.WriteLine("5. Sort clients for lastname.");
+                Console.WriteLine("6. Sort clients for firstname.");
+                Console.WriteLine("7. Get more info about client.");
+                Console.WriteLine("8. Back to menu.");
                 chooser = Console.ReadLine();
                 switch (chooser)
                 {
                     case "1":{
+                            Console.Clear();
                             Console.WriteLine("------------------");
                             Console.Write("Input a firstname of client(if you want cancel adding write symbol /): ");
                             firstname = Console.ReadLine();
@@ -551,6 +586,110 @@ namespace Coursework_PL_
                             }
                         } break;///EDIT CLIENT
                     case "5":{
+                            BLLMAIN.SortClientsForLastname();
+                            Console.Clear();
+                            Console.WriteLine("Clients was sorted for lastname");
+                            Console.WriteLine("------------------");
+                        } break;///SORT CLIENTS LASTNAMES
+                    case "6":{
+                            BLLMAIN.SortClientsForFirstname();
+                            Console.Clear();
+                            Console.WriteLine("Clients was sorted for firstname");
+                            Console.WriteLine("------------------");
+                        } break;///SORT CLIENTS FIRSTNAMES
+                    case "7":{
+                            Console.Clear();
+                            Console.WriteLine("------------------");
+                            numberOfClients = BLLMAIN.GetInfoAboutCountOfClients();
+                            if (numberOfClients != 0)
+                            {
+                                for (int i = 0; i < numberOfClients; i++)
+                                {
+                                    firstname = BLLMAIN.GetFirstnameOfClients(i);
+                                    lastname = BLLMAIN.GetLastnameOfClients(i);
+                                    phone = BLLMAIN.GetPhoneOfClients(i);
+                                    Console.WriteLine($"{i + 1}. {firstname} {lastname}: {phone}");
+                                }
+                                Console.WriteLine("------------------");
+                                bool forWhileS = true;
+                                while (forWhileS)
+                                {
+                                    bool test = true;
+                                    Console.Write("Choose a client you want to edit(if you want cancel write symbol /): ");
+                                    chooser = Console.ReadLine();
+                                    int clientEdit = 0;
+                                    if (chooser == "/")
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("You canceled editing.");
+                                        break;
+                                    }
+
+                                    try
+                                    {
+                                        clientEdit = Convert.ToInt32(chooser);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        exceptionForPL.InputNumberAreWrong(e);
+                                        test = false;
+                                    }
+                                    if (test)
+                                    {
+                                        if (clientEdit > numberOfClients || clientEdit < 1)
+                                        {
+                                            Console.WriteLine("Number outside of range, try again");
+                                        }
+                                        else
+                                        {
+                                            Console.Clear();
+                                            int clientChooser = Convert.ToInt32(chooser);
+                                            bool nullEqual = true;
+                                            clientChooser--;
+                                            Console.WriteLine("------------------");
+                                            firstname = BLLMAIN.GetFirstnameOfClients(clientChooser);
+                                            lastname = BLLMAIN.GetLastnameOfClients(clientChooser);
+                                            phone = BLLMAIN.GetPhoneOfClients(clientChooser);
+                                            Console.WriteLine($"Client: {firstname} {lastname}: {phone};");
+                                            Console.WriteLine($"Orders on this client:");
+                                            numberOfOrders = BLLMAIN.GetInfoAboutCountOfOrders();
+                                            if (numberOfOrders != 0)
+                                            {
+                                                for (int i = 0; i < numberOfOrders; i++)
+                                                {
+                                                    if (phone == BLLMAIN.GetPhoneFromOrder(i))
+                                                    {
+                                                        nullEqual = false;
+                                                        string client = BLLMAIN.GetClientFromOrder(i);
+                                                        string hotel = BLLMAIN.GetHotelFromOrder(i);
+                                                        int days = BLLMAIN.GetDaysInOrder(i);
+                                                        Console.WriteLine($"Order#{i + 1}: Hotel {hotel}; Client {client}; {days} days long.");
+                                                    }
+                                                }
+                                                if (nullEqual)
+                                                {
+                                                    Console.WriteLine("This clients doesnt order anything.");
+                                                }
+                                                Console.WriteLine("------------------");
+                                            }
+                                            else
+                                            {
+                                                Console.WriteLine("You dont have any orders in list, you need add order first");
+                                                Console.WriteLine("------------------");
+                                            }
+                                            forWhileS = false;
+                                        }
+                                    }
+
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("You dont have any clients in list, you need add client first");
+                                Console.WriteLine("------------------");
+                            }
+                        } break;///GET MORE INFO ABOUT CLIENT
+                    case "8":{
                             Console.Clear();
                             forWhile = false;
                         } break;///BACK TO MENU
@@ -576,7 +715,9 @@ namespace Coursework_PL_
             DateTime DateOut = DateTime.MinValue;
             bool ORDER_MANAGMENT_MENU = true;
             bool[] whichHotelToChoose;
+            string stringAddInfo = "";
             bool test = true;
+            bool breakfast = false;
             int[] PlaceInRoom;
             bool cancel = false;
             while (ORDER_MANAGMENT_MENU)
@@ -585,7 +726,10 @@ namespace Coursework_PL_
                 Console.WriteLine("2. Info about all orders.");
                 Console.WriteLine("3. Delete order from list.");
                 Console.WriteLine("4. Get more info about order.");
-                Console.WriteLine("5. Back to menu.");
+                Console.WriteLine("5. Find orders in certain termin.");
+                Console.WriteLine("6. Get info about clients that made a order.");
+                Console.WriteLine("7. Edit additional info in order");
+                Console.WriteLine("8. Back to menu.");
                 chooser = Console.ReadLine();
                 switch (chooser)
                 {
@@ -757,6 +901,40 @@ namespace Coursework_PL_
                                     }
                                 }
                             }
+                            //INPUT BREAKFAST OR NOT
+                            {
+                                bool MARK_BREAKFAST = true;
+                                while (MARK_BREAKFAST)
+                                {
+                                    Console.WriteLine("Input: 1.if you want include breakfast(price will be multiply by 2), 2.if does not(if you want cancel adding write symbol /):");
+                                    string stringChoose = Console.ReadLine();
+                                    switch (stringChoose)
+                                    {
+                                        case "1":
+                                            breakfast = true;
+                                            MARK_BREAKFAST = false;
+                                            break;
+                                        case "2":
+                                            breakfast = false;
+                                            MARK_BREAKFAST = false;
+                                            break;
+                                        case "/":
+                                            cancel = true;
+                                            MARK_BREAKFAST = false;
+                                            break;
+                                        default:
+                                            Console.WriteLine("Symbol doesnt right, try again.");
+                                            break;
+                                    }
+                                }
+                                if (cancel)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("You canceled adding order.");
+                                    Console.WriteLine("------------------");
+                                    break;
+                                }
+                            }
                             //ANALYZE WHICH HOTEL TO CHOOSE
                             {
                                 bool MARK_CHOOSE_HOTEL = true;
@@ -768,9 +946,10 @@ namespace Coursework_PL_
                                     for (int i = 0; i < numberOfHotels; i++)
                                     {
                                         nameOfHotel = BLLMAIN.GetNameOfHotel(i);
+                                        int price = BLLMAIN.GetPriceForOneNight(i);
                                         if (BLLMAIN.AnalyzeIfHotelHaveRooms(i, roomForOne, roomForTwo, roomForThree))
                                         {
-                                            Console.WriteLine($"{i + 1}. Hotel {nameOfHotel}");
+                                            Console.WriteLine($"{i + 1}. Hotel {nameOfHotel}: price for one night for one person {price} uah");
                                             whichHotelToChoose[i] = true;
                                         }
                                         else
@@ -915,7 +1094,45 @@ namespace Coursework_PL_
                                     break;
                                 }
                             }
-                            BLLMAIN.AddOrder(chooserClient - 1, chooserHotel - 1, roomForOne, roomForTwo, roomForThree, DateIn, DateOut);
+                            //INPUT ADDITIONAL INFO FROM CLIENT
+                            {
+                                Console.WriteLine("------------------");
+                                bool MARK_CHOOSE_ADD_INFO = true;
+                                while (MARK_CHOOSE_ADD_INFO)
+                                {
+                                    Console.WriteLine("Input additional text from client(if you want cancel adding write symbol /)(if you do not write anything write symbol *):");
+                                    stringAddInfo = Console.ReadLine();
+                                    if(stringAddInfo.Length != 0)
+                                    {
+                                        switch (stringAddInfo)
+                                        {
+                                            case "/":
+                                                cancel = true;
+                                                MARK_CHOOSE_ADD_INFO = false;
+                                                break;
+                                            case "*":
+                                                stringAddInfo = "";
+                                                MARK_CHOOSE_ADD_INFO = false;
+                                                break;
+                                            default:
+                                                MARK_CHOOSE_ADD_INFO = false;
+                                                break;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("You write nothing, try again.");
+                                    }
+                                }
+                                if (cancel)
+                                {
+                                    Console.Clear();
+                                    Console.WriteLine("You canceled adding order.");
+                                    Console.WriteLine("------------------");
+                                    break;
+                                }
+                            }
+                            BLLMAIN.AddOrder(chooserClient - 1, chooserHotel - 1, roomForOne, roomForTwo, roomForThree, DateIn, DateOut, breakfast, stringAddInfo);
                             Console.Clear();
                         } break;///ADD ORDER TO LIST
                     case "2":{
@@ -1040,8 +1257,232 @@ namespace Coursework_PL_
                                 Console.WriteLine("You dont have any orders in list, you need add order first");
                                 Console.WriteLine("------------------");
                             }
-                        } break;///GET MORE INFO ABOUT ORDER
+                        } break;///GET MORE INFO ABOUT ORDER             
                     case "5":{
+                            string dateInTemp = "";
+                            string dateOutTemp = "";
+                            string patternTemp = "dd/MM/yyyy";
+
+                            DateTime DateMinimumTemp;
+                            DateTime.TryParseExact("01/01/2022", patternTemp, null, DateTimeStyles.None, out DateMinimumTemp);
+
+
+                            bool MARK_WRITE_DATE_IN_OUT_TEMP = true;
+                            while (MARK_WRITE_DATE_IN_OUT_TEMP)
+                            {
+                                bool MARK_WRITE_DATE_IN = true;
+                                while (MARK_WRITE_DATE_IN)
+                                {
+                                    Console.Write("Input a date IN(example: 01/01/2022) start begin from 01/01/2022(if you want cancel write symbol /): ");
+                                    dateInTemp = Console.ReadLine();
+                                    if (dateInTemp == "/")
+                                    {
+                                        cancel = true;
+                                        break;
+                                    }
+                                    if (DateTime.TryParseExact(dateInTemp, patternTemp, null, DateTimeStyles.None, out DateIn))
+                                    {
+                                        if (DateIn < DateMinimumTemp)
+                                        {
+                                            Console.WriteLine("This date was before 01/01/2022, try again.");
+                                        }
+                                        else
+                                        {
+                                            MARK_WRITE_DATE_IN = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Unable input for this pattern, try again");
+                                    }
+                                }
+
+                                bool MARK_WRITE_DATE_OUT = true;
+                                if (!cancel)
+                                {
+                                    while (MARK_WRITE_DATE_OUT)
+                                    {
+                                        Console.Write("Input a date OUT(example: 01/01/2022) it must be after date IN(if you want cancel write symbol /): ");
+                                        dateOutTemp = Console.ReadLine();
+                                        if (dateOutTemp == "/")
+                                        {
+                                            cancel = true;
+                                            break;
+                                        }
+                                        if (DateTime.TryParseExact(dateOutTemp, patternTemp, null, DateTimeStyles.None, out DateOut))
+                                        {
+                                            if (DateIn > DateOut)
+                                            {
+                                                Console.WriteLine("This date before date IN, try again.");
+                                            }
+                                            else if (DateIn == DateOut)
+                                            {
+                                                Console.WriteLine("This date equal date IN, try again.");
+                                            }
+                                            else
+                                            {
+                                                MARK_WRITE_DATE_OUT = false;
+                                                MARK_WRITE_DATE_IN_OUT_TEMP = false;
+                                                bool checkTEMP = false;
+                                                Console.Clear();
+                                                Console.WriteLine("------------------");
+                                                numberOfOrders = BLLMAIN.GetInfoAboutCountOfOrders();
+                                                if (numberOfOrders != 0)
+                                                {
+                                                    for (int i = 0; i < numberOfOrders; i++)
+                                                    {
+                                                        string client = BLLMAIN.GetClientFromOrder(i);
+                                                        string hotel = BLLMAIN.GetHotelFromOrder(i);
+                                                        int days = BLLMAIN.GetDaysInOrder(i);
+                                                        DateTime checkThisDate = BLLMAIN.GetDateInOrder(i);
+                                                        if (checkThisDate >= DateIn && checkThisDate <= DateOut)
+                                                        {
+                                                            Console.WriteLine($"Order#{i + 1}: Hotel {hotel}; Client {client}; {days} days long.");
+                                                            checkTEMP = true;
+                                                        }
+                                                    }
+                                                    if (!checkTEMP)
+                                                    {
+                                                        Console.WriteLine("Not orders were found in this temrin");
+                                                    }
+                                                    Console.WriteLine("------------------");
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("You dont have any orders in list, you need add order first");
+                                                    Console.WriteLine("------------------");
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Unable input for this pattern, try again");
+                                        }
+                                    }
+                                }
+                                if (cancel)
+                                {
+                                    break;
+                                }
+                            }
+                            if (cancel)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("You canceled adding order.");
+                                Console.WriteLine("------------------");
+                                break;
+                            }
+                        } break;///FIND ORDERS IN CERTAIN TERMIN
+                    case "6":{
+                            Console.Clear();
+                            Console.WriteLine("------------------");
+                            numberOfOrders = BLLMAIN.GetInfoAboutCountOfOrders();
+                            if (numberOfOrders != 0)
+                            {
+                                for (int i = 0; i < numberOfOrders; i++)
+                                {
+                                    string client = BLLMAIN.GetClientFromOrder(i);
+                                    string hotel = BLLMAIN.GetHotelFromOrder(i);
+                                    phone = BLLMAIN.GetPhoneFromOrder(i);
+                                    int days = BLLMAIN.GetDaysInOrder(i);
+                                    Console.WriteLine($"Order#{i + 1}: Client: {client}: {phone}");
+                                }
+                                Console.WriteLine("------------------");
+                            }
+                            else
+                            {
+                                Console.WriteLine("You dont have any orders in list, you need add order first");
+                                Console.WriteLine("------------------");
+                            }
+                        } break;///GET INFO ABOUT CLIENTS THAT MADE A ORDER
+                    case "7":{
+                            Console.Clear();
+                            Console.WriteLine("------------------");
+                            numberOfOrders = BLLMAIN.GetInfoAboutCountOfOrders();
+                            if (numberOfOrders != 0)
+                            {
+                                for (int i = 0; i < numberOfOrders; i++)
+                                {
+                                    string client = BLLMAIN.GetClientFromOrder(i);
+                                    string hotel = BLLMAIN.GetHotelFromOrder(i);
+                                    int days = BLLMAIN.GetDaysInOrder(i);
+                                    Console.WriteLine($"Order#{i + 1}: Hotel {hotel}; Client {client}; {days} days long.");
+                                }
+                                Console.WriteLine("------------------");
+                                bool MARK_DELETE = true;
+                                while (MARK_DELETE)
+                                {
+                                    Console.Write("Choose a order you want to edit additional info(if you want cancel write symbol /): ");
+                                    chooser = Console.ReadLine();
+                                    if (chooser == "/")
+                                    {
+                                        Console.Clear();
+                                        Console.WriteLine("You cancel action get more info.");
+                                        Console.WriteLine("------------------");
+                                        break;
+                                    }
+                                    try
+                                    {
+                                        if (Convert.ToInt32(chooser) > numberOfOrders || Convert.ToInt32(chooser) < 1)
+                                        {
+                                            Console.WriteLine("Number outside of range, try again");
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("------------------");
+                                            bool MARK_CHOOSE_ADD_INFO = true;
+                                            while (MARK_CHOOSE_ADD_INFO)
+                                            {
+                                                Console.WriteLine("Input additional text from client you want to change(if you want cancel adding write symbol /)(if you do not write anything write symbol *):");
+                                                stringAddInfo = Console.ReadLine();
+                                                if (stringAddInfo.Length != 0)
+                                                {
+                                                    switch (stringAddInfo)
+                                                    {
+                                                        case "/":
+                                                            cancel = true;
+                                                            MARK_CHOOSE_ADD_INFO = false;
+                                                            break;
+                                                        case "*":
+                                                            stringAddInfo = "";
+                                                            MARK_CHOOSE_ADD_INFO = false;
+                                                            break;
+                                                        default:
+                                                            MARK_CHOOSE_ADD_INFO = false;
+                                                            BLLMAIN.EditAdditionalInfoInOrder(Convert.ToInt32(chooser), stringAddInfo);
+                                                            break;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("You write nothing, try again.");
+                                                }
+                                            }
+                                            if (cancel)
+                                            {
+                                                Console.Clear();
+                                                Console.WriteLine("You canceled adding order.");
+                                                Console.WriteLine("------------------");
+                                                break;
+                                            }
+
+                                            Console.WriteLine("------------------");
+                                            MARK_DELETE = false;
+                                        }
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        exceptionForPL.InputNumberAreWrong(e);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("You dont have any orders in list, you need add order first");
+                                Console.WriteLine("------------------");
+                            }
+                        } break;///EDIT ADDITIONAL INFO IN ORDER
+                    case "8":{
                             Console.Clear();
                             ORDER_MANAGMENT_MENU = false;
                         } break;///BACK TO MENU

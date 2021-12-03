@@ -12,7 +12,7 @@ namespace Coursework_BLL_
         public BLLMain() {}
 
         ///ORDER WORK
-        public void AddOrder(int client, int hotel, int roomForOne, int roomForTwo, int roomForThree, DateTime dateIn, DateTime dateOut)
+        public void AddOrder(int client, int hotel, int roomForOne, int roomForTwo, int roomForThree, DateTime dateIn, DateTime dateOut, bool breakfast, string addInfo)
         {
             List<int> roomsNumber = new List<int>();
             Room[] rooms = hotels[hotel].Rooms;
@@ -60,7 +60,7 @@ namespace Coursework_BLL_
             OrderOnRoom order;
             try
             {
-                order = new OrderOnRoom(clients[client], hotels[hotel], roomsNumber, dateIn, dateOut);
+                order = new OrderOnRoom(clients[client], hotels[hotel], roomsNumber, dateIn, dateOut, breakfast, addInfo);
             }
             catch
             {
@@ -82,16 +82,16 @@ namespace Coursework_BLL_
                 {
                     try
                     {
-                        rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied);
+                        rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied, roomInHotel[j].PriceForRoom);
                     }
                     catch
                     {
                         throw new ExceptionWhenIndexOutOfRange("Index out of range in function WriteOnFileOrder.");
                     }
                 }
-                Coursework_DAL_.DALHotel hotelDAL = new Coursework_DAL_.DALHotel(orders[i].Hotel.NameOfHotel, orders[i].Hotel.NumberOfRooms, rooms);
+                Coursework_DAL_.DALHotel hotelDAL = new Coursework_DAL_.DALHotel(orders[i].Hotel.NameOfHotel, orders[i].Hotel.NumberOfRooms, rooms, orders[i].Hotel.PriceForOneNightPeople);
 
-                Coursework_DAL_.DALOrder orderDAL = new Coursework_DAL_.DALOrder(clientDAL, hotelDAL, orders[i].RoomsNumber, orders[i].DateIn, orders[i].DateOut);
+                Coursework_DAL_.DALOrder orderDAL = new Coursework_DAL_.DALOrder(clientDAL, hotelDAL, orders[i].RoomsNumber, orders[i].DateIn, orders[i].DateOut, orders[i].Breakfast, orders[i].AddInfo);
                 DALorders.Add(orderDAL);
             }
             DALMain DALMAIN = new DALMain(DALorders);
@@ -112,7 +112,7 @@ namespace Coursework_BLL_
                     client = new Client(DALorders[i].Client.Firstname, DALorders[i].Client.Lastname, DALorders[i].Client.Phone);
                     hotel = new Hotel(DALorders[i].Hotel);
                     roomsNumber = DALorders[i].RoomsNumber;
-                    order = new OrderOnRoom(client, hotel, roomsNumber, DALorders[i].DateIn, DALorders[i].DateOut);
+                    order = new OrderOnRoom(client, hotel, roomsNumber, DALorders[i].DateIn, DALorders[i].DateOut, DALorders[i].Breakfast, DALorders[i].AddInfo);
                 }
                 catch
                 {
@@ -218,8 +218,34 @@ namespace Coursework_BLL_
             result += $"Date IN: {orders[count - 1].DateIn.Day}/{orders[count - 1].DateIn.Month}/{orders[count - 1].DateIn.Year}; \n";
             result += $"Date OUT: {orders[count - 1].DateOut.Day}/{orders[count - 1].DateOut.Month}/{orders[count - 1].DateOut.Year}; \n";
             result += $"Reservation for {orders[count - 1].HowManyDays} days;\n";
-            result += $"Price: {orders[count - 1].Price} uah.";
+            result += $"Breakfast: {GetInfoAboutBreakfastInOrder(count - 1)}; \n";
+            result += $"Price: {orders[count - 1].Price} uah; \n";
+            result += $"Additional info: {orders[count - 1].AddInfo}.";
             return result;
+        }
+        public DateTime GetDateInOrder(int count)
+        {
+            return orders[count].DateIn;
+        }
+        public string GetPhoneFromOrder(int count)
+        {
+            return orders[count].Client.Phone;
+        }
+        public string GetInfoAboutBreakfastInOrder(int count)
+        {
+            if (orders[count].Breakfast)
+            {
+                return "include";
+            }
+            else
+            {
+                return "not include";
+            }
+        }
+        public void EditAdditionalInfoInOrder(int count, string info)
+        {
+            orders[count - 1].AddInfo = info;
+            WriteOnFileOrder();
         }
 
         ///CLIENT WORK
@@ -333,14 +359,65 @@ namespace Coursework_BLL_
                 clients.Add(client);
             }
         }
-
+        public void SortClientsForLastname()
+        {
+            string[] lastnames = new string[clients.Count];
+            for (int i = 0; i < lastnames.Length; i++)
+            {
+                lastnames[i] = clients[i].Lastname;
+            }
+            Array.Sort(lastnames);
+            List<Client> sortedClients = new List<Client>();
+            List<Client> unsortedClients = clients;
+            for (int i = 0; i < clients.Count; i++)
+            {
+                for (int j = 0; j < unsortedClients.Count; j++)
+                {
+                    if(lastnames[i] == unsortedClients[j].Lastname)
+                    {
+                        Client client = new Client(unsortedClients[j].Firstname, unsortedClients[j].Lastname, unsortedClients[j].Phone);
+                        sortedClients.Add(client);
+                        unsortedClients[j].Lastname = "";
+                        break;
+                    }
+                }
+            }
+            clients = sortedClients;
+            WriteOnFileClient();
+        }
+        public void SortClientsForFirstname()
+        {
+            string[] firstnames = new string[clients.Count];
+            for (int i = 0; i < firstnames.Length; i++)
+            {
+                firstnames[i] = clients[i].Firstname;
+            }
+            Array.Sort(firstnames);
+            List<Client> sortedClients = new List<Client>();
+            List<Client> unsortedClients = clients;
+            for (int i = 0; i < clients.Count; i++)
+            {
+                for (int j = 0; j < unsortedClients.Count; j++)
+                {
+                    if (firstnames[i] == unsortedClients[j].Firstname)
+                    {
+                        Client client = new Client(unsortedClients[j].Firstname, unsortedClients[j].Lastname, unsortedClients[j].Phone);
+                        sortedClients.Add(client);
+                        unsortedClients[j].Firstname = "";
+                        break;
+                    }
+                }
+            }
+            clients = sortedClients;
+            WriteOnFileClient();
+        }
 
 
         ///HOTEL WORK
-        public int AddHotel(string nameOfHotel)
+        public int AddHotel(string nameOfHotel, int priceForOneNight)
         {
             Random numberOfRooms = new Random();
-            Hotel hotel = new Hotel(nameOfHotel, numberOfRooms.Next(100,150));
+            Hotel hotel = new Hotel(nameOfHotel, numberOfRooms.Next(100,150), priceForOneNight);
             hotels.Add(hotel);
             List<Coursework_DAL_.DALHotel> DALhotels = new List<Coursework_DAL_.DALHotel>();
             Coursework_DAL_.DALRoom[] rooms;
@@ -353,7 +430,7 @@ namespace Coursework_BLL_
                 {
                     try
                     {
-                        rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied);
+                        rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied, roomInHotel[j].PriceForRoom);
                     }
                     catch
                     {
@@ -363,7 +440,7 @@ namespace Coursework_BLL_
                 Coursework_DAL_.DALHotel hotelDAL;
                 try
                 {
-                    hotelDAL = new Coursework_DAL_.DALHotel(hotels[i].NameOfHotel, hotels[i].NumberOfRooms, rooms);
+                    hotelDAL = new Coursework_DAL_.DALHotel(hotels[i].NameOfHotel, hotels[i].NumberOfRooms, rooms, hotels[i].PriceForOneNightPeople);
                 }
                 catch
                 {
@@ -417,6 +494,7 @@ namespace Coursework_BLL_
                 }
             }
             string result = $"Hotel {hotels[count - 1].NameOfHotel} with {hotels[count - 1].NumberOfRooms} rooms in total:\n" +
+                $"Price for one person for one night {hotels[count - 1].PriceForOneNightPeople} uah; \n" +
                 $"Rooms for one person not occupied {roomOneUnbusy};\n" +
                 $"Rooms for two person not occupied {roomTwoUnbusy};\n" +
                 $"Rooms for three person not occupied {roomThreeUnbusy};";
@@ -454,7 +532,7 @@ namespace Coursework_BLL_
                 {
                     try
                     {
-                        rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied);
+                        rooms[j] = new DALRoom(roomInHotel[j].PlaceInRoom, roomInHotel[j].RoomNumber, roomInHotel[j].ISRoomOccupied, roomInHotel[j].PriceForRoom);
                     }
                     catch
                     {
@@ -464,7 +542,7 @@ namespace Coursework_BLL_
                 Coursework_DAL_.DALHotel hotelDAL;
                 try
                 {
-                    hotelDAL = new Coursework_DAL_.DALHotel(hotels[i].NameOfHotel, hotels[i].NumberOfRooms, rooms);
+                    hotelDAL = new Coursework_DAL_.DALHotel(hotels[i].NameOfHotel, hotels[i].NumberOfRooms, rooms, hotels[i].PriceForOneNightPeople);
                 }
                 catch
                 {
@@ -509,6 +587,17 @@ namespace Coursework_BLL_
             try
             {
                 return hotels[count].NameOfHotel;
+            }
+            catch
+            {
+                throw new ExceptionWhenIndexOutOfRange("Index out of range in function GetNameOfHotel.");
+            }
+        }
+        public int GetPriceForOneNight(int count)
+        {
+            try
+            {
+                return hotels[count].PriceForOneNightPeople;
             }
             catch
             {

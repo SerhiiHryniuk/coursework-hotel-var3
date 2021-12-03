@@ -13,10 +13,10 @@ namespace Coursework_DAL_
         private int priceForRoom { get; set; }
         private bool IsRoomOccupied { get; set; }
         private int roomNumber { get; set; }
-        public DALRoom(int placeInRoom, int roomNumber, bool isOccupied)
+        public DALRoom(int placeInRoom, int roomNumber, bool isOccupied, int priceForRoom)
         {
             this.placeInRoom = placeInRoom;
-            priceForRoom = placeInRoom * 25;
+            this.priceForRoom = priceForRoom;
             IsRoomOccupied = isOccupied;
             this.roomNumber = roomNumber;
         }

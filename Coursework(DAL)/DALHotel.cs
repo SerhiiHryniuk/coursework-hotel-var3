@@ -12,14 +12,22 @@ namespace Coursework_DAL_
         private string nameOfHotel { get; set; }
         private int numberOfRooms { get; set; }
         private DALRoom[] rooms;
-        public DALHotel(string nameOfHotel, int numberOfRooms, DALRoom[] rooms)
+        private int priceForOneNight { get; set; }
+        public DALHotel(string nameOfHotel, int numberOfRooms, DALRoom[] rooms, int priceForOneNight)
         {
+            this.priceForOneNight = priceForOneNight;
             this.nameOfHotel = nameOfHotel;
             this.numberOfRooms = numberOfRooms;
             this.rooms = rooms;
         }
 
-
+        public int PriceForOneNight
+        {
+            get
+            {
+                return priceForOneNight;
+            }
+        }
         public DALRoom[] Rooms
         {
             get

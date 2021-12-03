@@ -15,9 +15,14 @@ namespace Coursework_BLL_
         private int howManyDays { get; set; }
         private DateTime dateIn { get; set; }
         private DateTime dateOut { get; set; }
+        private string additionalInfoFromClient { get; set; }
+        private bool breakfast { get; set; }
+        private string addInfo { get; set; }
 
-        public OrderOnRoom(Client client, Hotel hotel, List<int> roomsNumber, DateTime dateIn, DateTime dateOut)
+        public OrderOnRoom(Client client, Hotel hotel, List<int> roomsNumber, DateTime dateIn, DateTime dateOut, bool breakfast, string addInfo)
         {
+            this.addInfo = addInfo;
+            this.breakfast = breakfast;
             this.client = client;
             this.hotel = hotel;
             this.roomsNumber = roomsNumber;
@@ -31,6 +36,39 @@ namespace Coursework_BLL_
             }
             howManyDays = (dateOut - dateIn).Days;
             price *= howManyDays;
+            if (breakfast)
+            {
+                price *= 2;
+            }
+        }
+        public string AddInfo
+        {
+            get
+            {
+                return addInfo;
+            }
+            set
+            {
+                addInfo = value;
+            }
+        }
+        public bool Breakfast
+        {
+            get
+            {
+                return breakfast;
+            }
+        }
+        public string AdditionalInfoFromClient
+        {
+            get
+            {
+                return additionalInfoFromClient;
+            }
+            set
+            {
+                additionalInfoFromClient = value;
+            }
         }
 
         public DateTime DateOut
@@ -39,12 +77,20 @@ namespace Coursework_BLL_
             {
                 return dateOut;
             }
+            set
+            {
+                dateOut = value;
+            }
         }
         public DateTime DateIn
         {
             get
             {
                 return dateIn;
+            }
+            set
+            {
+                dateIn = value;
             }
         }
 
@@ -67,6 +113,10 @@ namespace Coursework_BLL_
             get
             {
                 return client;
+            }
+            set
+            {
+                client = value;
             }
         }
         public int Price

@@ -13,18 +13,19 @@ namespace Coursework_BLL_
         private bool IsRoomOccupied { get; set; }
         private int roomNumber { get; set; }
 
-        public Room(int placeInRoom, int roomNumber, bool isRoomOccupied)
+        public Room(int placeInRoom, int roomNumber, bool isRoomOccupied, int priceForRoom)
         {
             this.placeInRoom = placeInRoom;
-            priceForRoom = placeInRoom * 25;
+            this.priceForRoom = priceForRoom;
             IsRoomOccupied = isRoomOccupied;
             this.roomNumber = roomNumber;
         }
 
-        public Room(int placeInRoom, int roomNumber)
+        public Room(int placeInRoom, int roomNumber, int priceForOneNight)
         {
             this.placeInRoom = placeInRoom;
-            priceForRoom = placeInRoom * 25;
+            priceForRoom = priceForOneNight;
+            priceForRoom = placeInRoom * priceForRoom;
             IsRoomOccupied = false;
             this.roomNumber = roomNumber;
         }

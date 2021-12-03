@@ -17,9 +17,13 @@ namespace Coursework_DAL_
         private int howManyDays { get; set; }
         private DateTime dateIn { get; set; }
         private DateTime dateOut { get; set; }
+        private bool breakfast { get; set; }
+        private string addInfo { get; set; }
 
-        public DALOrder(DALClient client, DALHotel hotel, List<int> roomsNumber, DateTime dateIn, DateTime dateOut)
+        public DALOrder(DALClient client, DALHotel hotel, List<int> roomsNumber, DateTime dateIn, DateTime dateOut, bool breakfast, string addInfo)
         {
+            this.addInfo = addInfo;
+            this.breakfast = breakfast;
             this.client = client;
             this.hotel = hotel;
             this.roomsNumber = roomsNumber;
@@ -27,7 +31,20 @@ namespace Coursework_DAL_
             this.dateOut = dateOut;
             howManyDays = (dateOut - dateIn).Days;
         }
-        
+        public string AddInfo
+        {
+            get
+            {
+                return addInfo;
+            }
+        }
+        public bool Breakfast
+        {
+            get
+            {
+                return breakfast;
+            }
+        }
         public DateTime DateOut
         {
             get
