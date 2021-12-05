@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Coursework_BLL_
 {
-    class OrderOnRoom
+    public class OrderOnRoom
     {
         private Client client { get; set; }
         private Hotel hotel { get; set; }
@@ -15,7 +15,6 @@ namespace Coursework_BLL_
         private int howManyDays { get; set; }
         private DateTime dateIn { get; set; }
         private DateTime dateOut { get; set; }
-        private string additionalInfoFromClient { get; set; }
         private bool breakfast { get; set; }
         private string addInfo { get; set; }
 
@@ -57,17 +56,6 @@ namespace Coursework_BLL_
             get
             {
                 return breakfast;
-            }
-        }
-        public string AdditionalInfoFromClient
-        {
-            get
-            {
-                return additionalInfoFromClient;
-            }
-            set
-            {
-                additionalInfoFromClient = value;
             }
         }
 

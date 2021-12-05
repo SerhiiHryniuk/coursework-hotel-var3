@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Coursework_BLL_
 {
-    class Room
+    public class Room
     {
         private int placeInRoom { get; set; }
         private int priceForRoom { get; set; }

@@ -11,7 +11,6 @@ namespace Coursework_DAL_
     {
         private DALClient client { get; set; }
         private DALHotel hotel { get; set; }
-
         private List<int> roomsNumber = new List<int>();
         private int price { get; set; }
         private int howManyDays { get; set; }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Coursework_BLL_
 {
-    class Client
+    public class Client
     {
         private string firstname { get; set; }
         private string lastname { get; set; }

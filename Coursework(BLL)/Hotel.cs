@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Coursework_BLL_
 {
-    class Hotel
+    public class Hotel
     {
         private string nameOfHotel { get; set; }
         private int numberOfRooms { get; set; }
