@@ -12,18 +12,18 @@ namespace Coursework_BLL_
         private string lastname { get; set; }
         private string phone { get; set; }
 
-        public Client(Coursework_DAL_.DALClient client)
-        {
-            firstname = client.Firstname;
-            lastname = client.Lastname;
-            phone = client.Phone;
-        }
-
         public Client(string firstname, string lastname, string phone)
         {
             this.firstname = firstname;
             this.lastname = lastname;
             this.phone = phone;
+        }
+
+        public Client(Coursework_DAL_.DALClient client)
+        {
+            firstname = client.Firstname;
+            lastname = client.Lastname;
+            phone = client.Phone;
         }
 
         public string Firstname

@@ -1259,6 +1259,7 @@ namespace Coursework_PL_
                             }
                         } break;///GET MORE INFO ABOUT ORDER             
                     case "5":{
+                            Console.Clear();
                             string dateInTemp = "";
                             string dateOutTemp = "";
                             string patternTemp = "dd/MM/yyyy";
@@ -1368,7 +1369,7 @@ namespace Coursework_PL_
                             if (cancel)
                             {
                                 Console.Clear();
-                                Console.WriteLine("You canceled adding order.");
+                                Console.WriteLine("You canceled find by termin order.");
                                 Console.WriteLine("------------------");
                                 break;
                             }

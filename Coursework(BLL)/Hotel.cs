@@ -13,6 +13,15 @@ namespace Coursework_BLL_
         private Room[] rooms { get; set; }
         private int priceForOneNightPeople { get; set; }
 
+        public Hotel(string nameOfHotel, int numberOfRooms, int priceForOneNight)
+        {
+            this.nameOfHotel = nameOfHotel;
+            this.numberOfRooms = numberOfRooms;
+            priceForOneNightPeople = priceForOneNight;
+            rooms = new Room[numberOfRooms];
+            GenerateRoom(priceForOneNight);
+        }
+
         public Hotel(Coursework_DAL_.DALHotel hotel)
         {
             priceForOneNightPeople = hotel.PriceForOneNight;
@@ -25,14 +34,6 @@ namespace Coursework_BLL_
             {
                 rooms[i] = new Room(roomsDAL[i].PlaceInRoom, i + 1, roomsDAL[i].ISRoomOccupied, roomsDAL[i].PriceForRoom);
             }
-        }
-        public Hotel(string nameOfHotel, int numberOfRooms, int priceForOneNight)
-        {
-            this.nameOfHotel = nameOfHotel;
-            this.numberOfRooms = numberOfRooms;
-            priceForOneNightPeople = priceForOneNight;
-            rooms = new Room[numberOfRooms];
-            GenerateRoom(priceForOneNight);
         }
 
         private void GenerateRoom(int priceForOneNight)
